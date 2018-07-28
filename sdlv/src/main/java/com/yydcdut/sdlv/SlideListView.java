@@ -97,19 +97,21 @@ class SlideListView extends DragListView implements WrapperAdapter.OnAdapterSlid
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View v, int position, long id) {
         //找到那个位置的view
-        View view = getChildAt(position - getFirstVisiblePosition());
-        if (mOnListItemLongClickListener != null && view instanceof ItemMainLayout) {
-            ItemMainLayout itemMainLayout = (ItemMainLayout) view;
-            if (itemMainLayout.getItemCustomView().getLeft() == 0) {
-                mState = STATE_LONG_CLICK_FINISH;
-                //回滚
-                mWrapperAdapter.returnSlideItemPosition();
-                //触发回调
-                mOnListItemLongClickListener.onListItemLongClick(itemMainLayout.getItemCustomView(), position);
+        if (dragOnLongPress) {
+            View view = getChildAt(position - getFirstVisiblePosition());
+            if (mOnListItemLongClickListener != null && view instanceof ItemMainLayout) {
+                ItemMainLayout itemMainLayout = (ItemMainLayout) view;
+                if (itemMainLayout.getItemCustomView().getLeft() == 0) {
+                    mState = STATE_LONG_CLICK_FINISH;
+                    //回滚
+                    mWrapperAdapter.returnSlideItemPosition();
+                    //触发回调
+                    mOnListItemLongClickListener.onListItemLongClick(itemMainLayout.getItemCustomView(), position);
+                }
             }
-        }
-        if (dragOnLongPress && (mState == STATE_LONG_CLICK_FINISH || mState == STATE_DOWN)) {
-            startDrag(position);
+            if (mState == STATE_LONG_CLICK_FINISH || mState == STATE_DOWN) {
+                startDrag(position);
+            }
         }
         return false;
     }

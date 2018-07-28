@@ -44,7 +44,7 @@ allprojects {
 App `build.gradle`
 ``` groovy
 dependencies {
-	implementation 'com.github.wilco375:SlideAndDragListView:0.7.6'
+	implementation 'com.github.wilco375:SlideAndDragListView:0.7.9'
 }
 ```
 

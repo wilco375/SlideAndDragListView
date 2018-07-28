@@ -16,6 +16,7 @@
 package com.yydcdut.sdlv;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.util.AttributeSet;
 import android.util.SparseArray;
 import android.view.MotionEvent;
@@ -71,7 +72,8 @@ class SlideListView extends DragListView implements WrapperAdapter.OnAdapterSlid
 
     private boolean dragOnLongPress = true;
 
-    private long downTime = 0L;
+    private long downTime;
+    private View downView;
 
     /* 监听器 */
     private SlideAndDragListView.OnSlideListener mOnSlideListener;
@@ -149,6 +151,17 @@ class SlideListView extends DragListView implements WrapperAdapter.OnAdapterSlid
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
+        int position = pointToPosition(mXDown, mYDown);
+
+        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
+            downView = getChildAt(position);
+            if (downView != null)
+                downView.setBackgroundColor(Color.parseColor("#e5e5e5"));
+        } else if (ev.getAction() == MotionEvent.ACTION_UP) {
+            if (downView != null)
+                downView.setBackgroundColor(Color.TRANSPARENT);
+        }
+
         if (isDeleteAnimationRunning) {
             return false;
         }
@@ -166,6 +179,7 @@ class SlideListView extends DragListView implements WrapperAdapter.OnAdapterSlid
         switch (ev.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
                 downTime = System.currentTimeMillis();
+
                 //获取出坐标来
                 mXDown = (int) ev.getX();
                 mYDown = (int) ev.getY();
@@ -184,7 +198,6 @@ class SlideListView extends DragListView implements WrapperAdapter.OnAdapterSlid
                 return false;
             case MotionEvent.ACTION_MOVE:
                 if (fingerLeftAndRightMove(ev) && !isItemViewHandlingMotionEvent) {//上下范围在50，主要检测左右滑动
-                    int position = pointToPosition(mXDown, mYDown);
                     ItemMainLayout itemMainLayout = getItemMainLayoutByPosition(mXDown, mYDown);
                     if (itemMainLayout != null) {
                         //判断是不是点在menu上面了
@@ -233,7 +246,6 @@ class SlideListView extends DragListView implements WrapperAdapter.OnAdapterSlid
                 }
                 break;
             case MotionEvent.ACTION_UP:
-                int position = pointToPosition(mXDown, mYDown);
                 if (position != AdapterView.INVALID_POSITION) {
                     if (mState == STATE_DOWN || mState == STATE_LONG_CLICK_FINISH) {
                         //是否ScrollBack了，是的话就不去执行onListItemClick操作了

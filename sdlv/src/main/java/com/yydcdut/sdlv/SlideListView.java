@@ -69,6 +69,8 @@ class SlideListView extends DragListView implements WrapperAdapter.OnAdapterSlid
     /* 是否到了底部 */
     private boolean isAtBottom = false;
 
+    private boolean dragOnLongPress = true;
+
     /* 监听器 */
     private SlideAndDragListView.OnSlideListener mOnSlideListener;
     private SlideAndDragListView.OnMenuItemClickListener mOnMenuItemClickListener;
@@ -106,7 +108,7 @@ class SlideListView extends DragListView implements WrapperAdapter.OnAdapterSlid
                 mOnListItemLongClickListener.onListItemLongClick(itemMainLayout.getItemCustomView(), position);
             }
         }
-        if (mState == STATE_LONG_CLICK_FINISH || mState == STATE_DOWN) {
+        if (dragOnLongPress && (mState == STATE_LONG_CLICK_FINISH || mState == STATE_DOWN)) {
             startDrag(position);
         }
         return false;
@@ -650,5 +652,9 @@ class SlideListView extends DragListView implements WrapperAdapter.OnAdapterSlid
         if (mOnItemScrollBackListener != null) {
             mOnItemScrollBackListener.onScrollBackAnimationFinished(view, position);
         }
+    }
+
+    public void setDragOnLongPress(boolean dragOnLongPress) {
+        this.dragOnLongPress = dragOnLongPress;
     }
 }

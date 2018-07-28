@@ -71,6 +71,8 @@ class SlideListView extends DragListView implements WrapperAdapter.OnAdapterSlid
 
     private boolean dragOnLongPress = true;
 
+    private long downTime = 0L;
+
     /* 监听器 */
     private SlideAndDragListView.OnSlideListener mOnSlideListener;
     private SlideAndDragListView.OnMenuItemClickListener mOnMenuItemClickListener;
@@ -163,6 +165,7 @@ class SlideListView extends DragListView implements WrapperAdapter.OnAdapterSlid
         }
         switch (ev.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
+                downTime = System.currentTimeMillis();
                 //获取出坐标来
                 mXDown = (int) ev.getX();
                 mYDown = (int) ev.getY();
@@ -240,7 +243,8 @@ class SlideListView extends DragListView implements WrapperAdapter.OnAdapterSlid
                                 View v = getChildAt(position - getFirstVisiblePosition());
                                 if (v instanceof ItemMainLayout) {
                                     ItemMainLayout itemMainLayout = (ItemMainLayout) v;
-                                    mOnListItemClickListener.onListItemClick(itemMainLayout.getItemCustomView(), position);
+                                    if (System.currentTimeMillis() - downTime < 500)
+                                        mOnListItemClickListener.onListItemClick(itemMainLayout.getItemCustomView(), position);
                                 }
                             }
                         }
